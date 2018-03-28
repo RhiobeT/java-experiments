@@ -18,6 +18,7 @@ import org.openjdk.jmh.annotations.Mode;
 import org.openjdk.jmh.annotations.OutputTimeUnit;
 import org.openjdk.jmh.annotations.Param;
 import org.openjdk.jmh.annotations.Scope;
+import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 
 @BenchmarkMode(Mode.AverageTime)
@@ -25,11 +26,12 @@ import org.openjdk.jmh.annotations.State;
 @State(Scope.Benchmark)
 public class BenchStreamVsListIO {
 
-  @Param({"10000000"})
+  @Param({"100000000"})
   private int N;
     
   private Path path;
 
+  @Setup
   public void setup() throws Exception {
     path = Paths.get("data.txt");
 
@@ -42,7 +44,7 @@ public class BenchStreamVsListIO {
     writer.close();
   }
 
-  @Benchmark
+  //@Benchmark
   public List<Long> computeWithList() throws Exception {
     List<String> values;
     List<Long> result = new ArrayList<>();
@@ -60,17 +62,17 @@ public class BenchStreamVsListIO {
     return result;
   }
 
-
+  @Benchmark
   public List<Long> computeWithStream() throws Exception {
     return Files.lines(path).mapToLong(Long::parseLong).filter(e -> e > 900).boxed().collect(Collectors.toList());
   }
 
-
+  @Benchmark
   public List<Long> computeWithParallelStream() throws Exception {
     return Files.lines(path).parallel().mapToLong(Long::parseLong).filter(e -> e > 900).boxed().collect(Collectors.toList());
   }
 
-
+  @Benchmark
   public List<Long> computeWithIterator() throws Exception {
     String line;
     long temp;
@@ -82,6 +84,8 @@ public class BenchStreamVsListIO {
         result.add(temp);
       }
     }
+    
+    reader.close();
 
     return result;
   }
