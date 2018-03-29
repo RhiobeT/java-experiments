@@ -27,5 +27,12 @@
   	<artifactId>jmh-generator-annprocess</artifactId>
   	<version>1.20</version>
   </dependency>
+  <dependency>
+    <groupId>javafx</groupId>
+    <artifactId>openjfx</artifactId>
+    <version>8.0</version>
+    <scope>system</scope>
+    <systemPath>/usr/lib/jvm/java-8-openjdk/jre/lib/ext/jfxrt.jar</systemPath>
+  </dependency>
   </dependencies>
 </project>
