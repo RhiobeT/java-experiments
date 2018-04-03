@@ -37,3 +37,17 @@ The results for a 1000x1000 matrix were the following:
 | For loop | 2831629,361 ± 345859,847 |
 | Parallel stream | 4834140,698 ±  66740,696 |
 | Normal stream | 7322371,598 ± 526313,049 |
+
+## BenchFinalArray
+Checks the performances when using the "final" keyword on different kinds of array variables.
+
+The results were the following:
+
+| Kind | Time (in µs) |
+| --- | --- |
+| static final | 834889,480 ±  54030,044 |
+| local | 1051233,608 ± 100803,478 |
+| local final | 1057387,611 ±  61264,349 |
+| non static final | 1076462,556 ±  56087,109 |
+| non static | 1111363,569 ±  42588,345 |
+| static | 1119872,915 ±  54897,878 |
