@@ -19,7 +19,7 @@ import org.openjdk.jmh.annotations.State;
 public class BenchStreamVsListSum {
   private List<Long> list;
   
-  @Param({"10000000"})
+  @Param({"50000000"})
   private int N;
 
   @Setup

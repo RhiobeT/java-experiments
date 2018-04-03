@@ -24,7 +24,7 @@ import org.openjdk.jmh.annotations.State;
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.MICROSECONDS)
 @State(Scope.Benchmark)
-public class BenchStreamVsListIO {
+public class BenchStreamIO {
 
   @Param({"100000000"})
   private int N;
@@ -45,7 +45,7 @@ public class BenchStreamVsListIO {
   }
 
   //@Benchmark
-  public List<Long> computeWithList() throws Exception {
+  public int computeWithList() throws Exception {
     List<String> values;
     List<Long> result = new ArrayList<>();
     long temp;
@@ -59,21 +59,21 @@ public class BenchStreamVsListIO {
       }
     }
 
-    return result;
+    return result.size();
   }
 
   @Benchmark
-  public List<Long> computeWithStream() throws Exception {
-    return Files.lines(path).mapToLong(Long::parseLong).filter(e -> e > 900).boxed().collect(Collectors.toList());
+  public int computeWithStream() throws Exception {
+    return Files.lines(path).mapToLong(Long::parseLong).filter(e -> e > 900).boxed().collect(Collectors.toList()).size();
   }
 
   @Benchmark
-  public List<Long> computeWithParallelStream() throws Exception {
-    return Files.lines(path).parallel().mapToLong(Long::parseLong).filter(e -> e > 900).boxed().collect(Collectors.toList());
+  public int computeWithParallelStream() throws Exception {
+    return Files.lines(path).parallel().mapToLong(Long::parseLong).filter(e -> e > 900).boxed().collect(Collectors.toList()).size();
   }
 
   @Benchmark
-  public List<Long> computeWithIterator() throws Exception {
+  public int computeWithIterator() throws Exception {
     String line;
     long temp;
     BufferedReader reader = new BufferedReader(new FileReader(path.toFile()));
@@ -87,7 +87,7 @@ public class BenchStreamVsListIO {
     
     reader.close();
 
-    return result;
+    return result.size();
   }
 
 }
