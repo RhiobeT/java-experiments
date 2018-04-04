@@ -127,6 +127,8 @@ The goal here was to see if declaring things as final could have some effects pe
 ## BenchFinalArray
 Checks the performances when using the "final" keyword on different kinds of array variables.
 
+[Direct link](src/main/java/fr/rhiobet/benchmarks/BenchFinalArray.java)
+
 The results were the following:
 
 | Kind | Time (in µs) |
