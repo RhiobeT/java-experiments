@@ -9,11 +9,11 @@ public class Main {
   public static void main(String[] args) throws RunnerException {
     Options opt = new OptionsBuilder()
 //        .include("fr.rhiobet.benchmarks.BenchStreamVsListSum")
-//        .include("fr.rhiobet.benchmarks.BenchStreamIO")
-        .include("fr.rhiobet.benchmarks.BenchFinalArray")
+        .include("fr.rhiobet.benchmarks.BenchStreamIO")
+//        .include("fr.rhiobet.benchmarks.BenchFinalArray")
 //        .include("fr.rhiobet.benchmarks.BenchStreamMatrixMultiplication")
-        .warmupIterations(10)
-        .measurementIterations(10)
+        .warmupIterations(5)
+        .measurementIterations(8)
         .forks(1)
         .shouldFailOnError(true)
         .build();

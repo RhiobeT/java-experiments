@@ -44,20 +44,20 @@ public class BenchStreamIO {
     writer.close();
   }
 
-  //@Benchmark
-  public int computeWithList() throws Exception {
-    List<String> values;
-    List<Long> result = new ArrayList<>();
+  @Benchmark
+  public int computeWithFor() throws Exception {
+    List<Long> result = new ArrayList<>();    
+    BufferedReader reader = new BufferedReader(new FileReader(path.toFile()));
     long temp;
 
-    values = Files.readAllLines(path);
-
-    for (int i = 0; i < values.size(); i++) {
-      temp = Long.parseLong(values.get(i));
+    for (int i = 0; i < N; i++) {
+      temp = Long.parseLong(reader.readLine());
       if (temp > 900) {
         result.add(temp);
       }
     }
+    
+    reader.close();
 
     return result.size();
   }

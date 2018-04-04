@@ -53,6 +53,31 @@ public class BenchStreamMatrixMultiplication {
   }
 
   @Benchmark
+  public int[][] computeSquareWithWhile() {
+    int result[][] = new int[N][N];
+    
+    int temp, i, j, k;
+    
+    i = 0;
+    while (i < N) {
+      j = 0;
+      while (j < N) {
+        temp = 0;
+        k = 0;
+        while (k < N) {
+          temp += result[i][k] * result[k][j];
+          k++;
+        }
+        result[i][j] = temp;
+        j++;
+      }
+      i++;
+    }
+    
+    return result;
+  }
+  
+  @Benchmark
   public int[][] computeSquareWithStream() {
     return Arrays.stream(matrix).map(
         row -> IntStream.range(0, N).map(

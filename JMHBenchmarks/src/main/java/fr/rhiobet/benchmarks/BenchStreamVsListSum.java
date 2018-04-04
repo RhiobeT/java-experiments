@@ -1,5 +1,6 @@
 package fr.rhiobet.benchmarks;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -30,6 +31,16 @@ public class BenchStreamVsListSum {
     for (int j = 0; j < N; j++) {
       list.add(Long.valueOf(random.nextInt(1000)));
     }
+  }
+  
+  @Benchmark
+  public long computeSumWithIterator() {
+    long sum = 0;
+    Iterator<Long> iterator = list.iterator();
+    while (iterator.hasNext()) {
+      sum += iterator.next();
+    }
+    return sum;
   }
 
   @Benchmark
