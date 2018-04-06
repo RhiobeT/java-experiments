@@ -142,6 +142,6 @@ The results were the following:
 
 **Tentative conclusion**
 
-It looks like making a variable "final" has little to no effect from a performance point of view, unless the variable is a static attribute (in which case it becomes an actual constant).
+It looks like making a variable "final" has little to no effect from a performance point of view, unless the variable is a static field (in which case it becomes an actual constant).
 
-We can also notice that accessing local variables might be faster than accessing attributes.
+We can also notice that accessing local variables might be faster than accessing fields.
