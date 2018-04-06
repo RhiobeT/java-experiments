@@ -87,9 +87,9 @@ public class StaticFieldsProcessor extends AbstractProcessor<CtClass<?>> {
   /**
    * The process done by this processor.
    * 
-   * The process of this processor will be either {@link #firstPass(CtClass<?>)} or {@link #secondPass(CtClass<?>)}
+   * The process of this processor will be either {@link #firstPass(CtClass)} or {@link #secondPass(CtClass)}
    * depending on whether {@link #setFirstPassDone()} was called or not.
-   * <br /> To use this processor, {@link spoon.SpoonAPI.process()} should be called twice, with a call to
+   * <br /> To use this processor, {@link #spoon.SpoonAPI.process()} should be called twice, with a call to
    * {@link #setFirstPassDone()} in between.
    */
   @Override
