@@ -81,6 +81,9 @@ public class MavenProjectManager {
    * @param showProgress whether to print the current progress on standard output or not
    */
   public void downloadGitProjects(boolean showProgress) {
+    if (showProgress) {
+      System.out.println("Starting download...");
+    }
     for (Repository repository : this.gitRepositories) {
       File directory = new File(this.projectRoot + "/" + repository.getName());
       if (directory.exists()) {
@@ -91,8 +94,7 @@ public class MavenProjectManager {
       } else {
         try {
           if (showProgress) {
-            System.out.print("Downloading " + repository.getName() + "... ");
-            System.out.flush();
+            System.out.println("Downloading " + repository.getName() + "... ");
           }
           Git.cloneRepository().setCloneSubmodules(true)
                   .setURI(repository.getUrl()).setDirectory(directory).call();
@@ -131,6 +133,9 @@ public class MavenProjectManager {
    * @param showProgress whether to print the current progress on standard output or not
    */
   public void buildProjects(boolean showProgress) {
+    if (showProgress) {
+      System.out.println("Starting building...");
+    }
     for (int i = 0; i < this.managedProjects.size(); i++) {
       File pomFile = new File(this.managedProjects.get(i).getAbsolutePath() + "/pom.xml");
       InvocationRequest request = new DefaultInvocationRequest();
@@ -139,8 +144,7 @@ public class MavenProjectManager {
       request.setBatchMode(true);
       try {
         if (showProgress) {
-          System.out.print("Building " + this.managedProjects.get(i).getName() + "... ");
-          System.out.flush();
+          System.out.println("Building " + this.managedProjects.get(i).getName() + "... ");
         }
         InvocationResult result = this.invoker.execute(request);
         if (result.getExitCode() == 0) {

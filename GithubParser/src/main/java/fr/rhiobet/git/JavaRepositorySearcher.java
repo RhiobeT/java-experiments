@@ -97,7 +97,10 @@ public class JavaRepositorySearcher {
     
     found = 0;
     starsMax = this.maximumStars;
-   
+  
+    if (showProgress) {
+      System.out.println("Starting search...");
+    }
     while (found < number) {
       starsMin = starsMax * (number - found - 1) / (number - found);
       found += find(1, starsMin, starsMax, checkMaven);
