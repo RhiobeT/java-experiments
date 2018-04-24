@@ -1,11 +1,13 @@
 package fr.rhiobet.git;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.egit.github.core.RepositoryContents;
 import org.eclipse.egit.github.core.SearchRepository;
+import org.eclipse.egit.github.core.client.GitHubRequest;
 import org.eclipse.egit.github.core.service.ContentsService;
 import org.eclipse.egit.github.core.service.RepositoryService;
 
@@ -104,13 +106,54 @@ public class JavaRepositorySearcher {
     while (found < number) {
       starsMin = starsMax * (number - found - 1) / (number - found);
       found += find(1, starsMin, starsMax, checkMaven);
-      starsMax = starsMin;
+      starsMax = starsMin - 1;
       if (showProgress) {
         System.out.println("Found: " + found + "/" + number);
       }
     }
     
     return found;
+  }
+
+  
+  /**
+   * This class is used to parse the results from search requests and extract the number of elements.   *
+   */
+  private static class RepositoryTotalCount implements Serializable {
+    private static final long serialVersionUID = 5976656528144914397L;
+    private int total_count;
+    
+    public int getTotalCount() {
+      return this.total_count;
+    }
+  }
+  
+  
+  /**
+   * Gets the total number of Java repositories currently on GitHub. 
+   * @return the total number of Java repositories currently on GitHub
+   */
+  public int getNumberOfRepositories() {
+    return this.getNumberOfRepositories(0, this.maximumStars);
+  }
+  
+  
+  /**
+   * Gets the total number of Java repositories on GitHub for a specific stars rating interval.
+   * @param starsMin the minimum of the interval
+   * @param starsMax the maximum of the interval
+   * @return the number of corresponding Java repositories
+   */
+  public int getNumberOfRepositories(int starsMin, int starsMax) {
+    GitHubRequest request = new GitHubRequest()
+        .setUri("/search/repositories?q=language:java%20stars:" + starsMin + ".." + starsMax)
+        .setType(RepositoryTotalCount.class);
+    try {
+      return ((RepositoryTotalCount) this.repositoryService.getClient().get(request).getBody()).getTotalCount();
+    } catch (IOException e) {
+      e.printStackTrace();
+      return -1;
+    }
   }
   
   
@@ -126,7 +169,7 @@ public class JavaRepositorySearcher {
   
   
   /**
-   * Searches for a specific number of repositories, according to the specified stars rating interval
+   * Searches for a specific number of repositories, according to the specified stars rating interval.
    * @param number the wanted number of repositories
    * @param starsMin the minimum stars rating for the wanted repositories
    * @param starsMax the maximum stars rating for the wanted repositories
@@ -140,20 +183,21 @@ public class JavaRepositorySearcher {
     try { 
       while (found < number) {
         List<SearchRepository> searchResults = repositoryService.searchRepositories(
-            "language:java stars:" + starsMin + ".." + starsMax, pageIndex);
+            "language:java stars:" + starsMin + ".." + starsMax + " sort:updated", pageIndex);
         if (searchResults.size() < 100) {
           lastPage = true;
         }
+        searchResults.removeAll(this.results);
         
         if (checkMaven) {
           this.filterMaven(searchResults, number - found);
         }
         
         if (number - found <= searchResults.size()) {
-          results.addAll(searchResults.subList(0, number - found));
+          this.results.addAll(searchResults.subList(0, number - found));
           found = number;
         } else {
-          results.addAll(searchResults);
+          this.results.addAll(searchResults);
           found += searchResults.size();
           pageIndex++;
         }
@@ -194,7 +238,7 @@ public class JavaRepositorySearcher {
         for (RepositoryContents content : this.contentsService.getContents(repositories.get(i))) {
           if (content.getName().equals("pom.xml")) {
             found = true;
-            if (wantedNumber > -1) {
+            if (wantedNumber > 0) {
               wantedNumber--;
             }
             break;

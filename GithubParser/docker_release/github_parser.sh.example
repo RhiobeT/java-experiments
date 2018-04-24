@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# Your GitHub API token goes here
+# No special permission is required, this is only for authentication purposes
+# export API_TOKEN=abcdef0000000000000000000000000000000001
+
+# The folder in which you want to save the working projects
+export PROJECT_ROOT=./maven
+
+# The number of projects you want to download
+export NB_PROJECTS_WANTED=100
+
+# The strategy you want to use, between "random", "stars" and "hybrid"
+# random will simply get the latest updated projects
+# stars will search for projects having different stars rating
+# hybrid will use both for each half of the total set
+export STRATEGY=stars
+
+mkdir -p $PROJECT_ROOT
+
+docker-compose up

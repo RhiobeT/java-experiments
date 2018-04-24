@@ -1,0 +1,9 @@
+FROM maven:3-jdk-8
+WORKDIR /usr/src/GithubParser
+COPY . /usr/src/GithubParser
+RUN mvn clean install
+
+FROM maven:3-jdk-8
+WORKDIR /usr/src/GithubParser
+COPY --from=0 /usr/src/GithubParser/target/GithubParser-1.0-jar-with-dependencies.jar /usr/src/GithubParser
+CMD java -jar GithubParser-1.0-jar-with-dependencies.jar

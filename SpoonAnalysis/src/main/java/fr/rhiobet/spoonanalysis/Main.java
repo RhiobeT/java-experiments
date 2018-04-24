@@ -1,9 +1,9 @@
-package fr.rhiobet;
+package fr.rhiobet.spoonanalysis;
 
 import java.util.List;
 import java.util.Map;
 
-import fr.rhiobet.processors.StaticFieldsProcessor;
+import fr.rhiobet.spoonanalysis.staticfields.SFContext;
 import spoon.MavenLauncher;
 import spoon.SpoonAPI;
 import spoon.reflect.declaration.CtField;
@@ -12,9 +12,21 @@ public class Main {
 
   public static void main(String args[]) {
     callStaticFieldsProcessor("/home/rhiobet/irit/jitsi-videobridge/", MavenLauncher.SOURCE_TYPE.APP_SOURCE);
+    callStaticFieldsProcessor("/home/rhiobet/irit/commons-codec/", MavenLauncher.SOURCE_TYPE.APP_SOURCE);
+    //callDataflowProcessor("/home/rhiobet/eclipse-workspace/Test/", MavenLauncher.SOURCE_TYPE.APP_SOURCE);
+  }
+  
+  
+  private static void callDataflowProcessor(String project, MavenLauncher.SOURCE_TYPE sourceType) {
+    SpoonAPI spoon = new MavenLauncher(project, sourceType);
+    
+    spoon.addProcessor("fr.rhiobet.processors.DataflowProcessor");
+    
+    spoon.buildModel();
+    spoon.process();
   }
  
-  
+ 
   /**
    * Will perform an analysis of the static fields in a Maven project.
    * 
@@ -31,18 +43,19 @@ public class Main {
   private static void callStaticFieldsProcessor(String project, MavenLauncher.SOURCE_TYPE sourceType) {
     SpoonAPI spoon = new MavenLauncher(project, sourceType);
   
-    spoon.addProcessor("fr.rhiobet.processors.StaticFieldsProcessor");
+    spoon.addProcessor("fr.rhiobet.spoonanalysis.processors.StaticFieldsProcessor");
     
+    SFContext.reset();
     spoon.buildModel();
     spoon.process();
-    StaticFieldsProcessor.setFirstPassDone();
+    SFContext.setFirstPassDone();
     spoon.process();
     
-    Map<String, List<CtField<?>>> nonFinalStaticFields = StaticFieldsProcessor.getNonFinalStaticFields();
-    Map<String, int[]> nbStaticFields = StaticFieldsProcessor.getNbStaticFields();
-    int nbStaticFieldsTotal = StaticFieldsProcessor.getNbStaticFieldsTotal();
-    int nbStaticFinalFieldsTotal = StaticFieldsProcessor.getNbFinalStaticFieldsTotal();
-    int nbNonFinalizableFields = StaticFieldsProcessor.getNbNonFinalizableFieldsTotal();
+    Map<String, List<CtField<?>>> nonFinalStaticFields = SFContext.getNonFinalStaticFields();
+    Map<String, int[]> nbStaticFields = SFContext.getNbStaticFields();
+    int nbStaticFieldsTotal = SFContext.getNbStaticFieldsTotal();
+    int nbStaticFinalFieldsTotal = SFContext.getNbFinalStaticFieldsTotal();
+    int nbNonFinalizableFields = SFContext.getNbNonFinalizableFieldsTotal();
     
     for (Map.Entry<String, int[]> entry : nbStaticFields.entrySet()) {
       int nbs[] = entry.getValue();
