@@ -3,6 +3,7 @@ package fr.rhiobet.spoonanalysis;
 import java.util.List;
 import java.util.Map;
 
+import fr.rhiobet.spoonanalysis.processors.DataflowProcessor;
 import fr.rhiobet.spoonanalysis.staticfields.SFContext;
 import spoon.MavenLauncher;
 import spoon.SpoonAPI;
@@ -11,18 +12,22 @@ import spoon.reflect.declaration.CtField;
 public class Main {
 
   public static void main(String args[]) {
-    callStaticFieldsProcessor("/home/rhiobet/irit/jitsi-videobridge/", MavenLauncher.SOURCE_TYPE.APP_SOURCE);
-    callStaticFieldsProcessor("/home/rhiobet/irit/commons-codec/", MavenLauncher.SOURCE_TYPE.APP_SOURCE);
-    //callDataflowProcessor("/home/rhiobet/eclipse-workspace/Test/", MavenLauncher.SOURCE_TYPE.APP_SOURCE);
+    //callStaticFieldsProcessor("/home/rhiobet/irit/jitsi-videobridge/", MavenLauncher.SOURCE_TYPE.APP_SOURCE);
+    //callStaticFieldsProcessor("/home/rhiobet/irit/commons-codec/", MavenLauncher.SOURCE_TYPE.APP_SOURCE);
+    callDataflowProcessor("/home/rhiobet/eclipse-workspace/Test/", MavenLauncher.SOURCE_TYPE.APP_SOURCE);
   }
   
   
   private static void callDataflowProcessor(String project, MavenLauncher.SOURCE_TYPE sourceType) {
     SpoonAPI spoon = new MavenLauncher(project, sourceType);
     
-    spoon.addProcessor("fr.rhiobet.processors.DataflowProcessor");
+    spoon.addProcessor("fr.rhiobet.spoonanalysis.processors.DataflowProcessor");
     
     spoon.buildModel();
+    spoon.process();
+    DataflowProcessor.setFirstPassDone();
+    spoon.process();
+    DataflowProcessor.setSecondPassDone();
     spoon.process();
   }
  
