@@ -14,7 +14,8 @@ public class Main {
   public static void main(String args[]) {
     //callStaticFieldsProcessor("/home/rhiobet/irit/jitsi-videobridge/", MavenLauncher.SOURCE_TYPE.APP_SOURCE);
     //callStaticFieldsProcessor("/home/rhiobet/irit/commons-codec/", MavenLauncher.SOURCE_TYPE.APP_SOURCE);
-    callDataflowProcessor("/home/rhiobet/eclipse-workspace/Test/", MavenLauncher.SOURCE_TYPE.APP_SOURCE);
+    //callDataflowProcessor("/home/rhiobet/eclipse-workspace/Test/", MavenLauncher.SOURCE_TYPE.APP_SOURCE);
+    callStatementsRandomizationProcessor("/home/rhiobet/eclipse-workspace/Test/", MavenLauncher.SOURCE_TYPE.APP_SOURCE);
   }
   
   
@@ -29,6 +30,19 @@ public class Main {
     spoon.process();
     DataflowProcessor.setSecondPassDone();
     spoon.process();
+  }
+  
+  
+  private static void callStatementsRandomizationProcessor(String project, MavenLauncher.SOURCE_TYPE sourceType) {
+    callDataflowProcessor(project, sourceType);
+    
+    SpoonAPI spoon = new MavenLauncher(project, sourceType);
+    
+    spoon.addProcessor("fr.rhiobet.spoonanalysis.processors.StatementsRandomizationProcessor");
+    
+    spoon.buildModel();
+    spoon.process();    
+    spoon.prettyprint();
   }
  
  

@@ -37,5 +37,10 @@ public class DataflowProcessor extends AbstractProcessor<CtClass<?>> {
   public static void setSecondPassDone() {
     currentPass = 2;
   }
+  
+  
+  public static DFCtClass getProcessedClass(CtClass<?> wantedClass) {
+    return processedClasses.get(wantedClass);
+  }
 
 }

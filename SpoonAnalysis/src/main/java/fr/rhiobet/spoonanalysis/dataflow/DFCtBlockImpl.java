@@ -94,6 +94,18 @@ public class DFCtBlockImpl extends DFCtStatementImpl implements DFCtBlock {
               }
             }
           }
+        } else if (dependency.getKind() == Dependency.Kind.WRITE) {
+          for (int j = i - 1; j >= 0; j--) {
+            DFCtStatement statementDependency = this.statements.get(j);
+            for (Dependency dependency2 : statementDependency.getDependencies()) {
+              // We look for two statements having a dependency on the same variable,
+              // the last in the block being a write and the first being a define
+              if (dependency.getVariable().equals(dependency2.getVariable())
+                  && dependency2.getKind() == Dependency.Kind.DEFINE) {
+                statement.addStatementDependency(statementDependency);
+              }
+            }
+          }
         }
       }
     }
