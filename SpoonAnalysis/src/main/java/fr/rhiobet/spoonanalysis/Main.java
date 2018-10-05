@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import fr.rhiobet.spoonanalysis.processors.DataflowProcessor;
+import fr.rhiobet.spoonanalysis.processors.jmh.BenchmarkProcessor;
 import fr.rhiobet.spoonanalysis.staticfields.SFContext;
 import spoon.MavenLauncher;
 import spoon.SpoonAPI;
@@ -12,12 +13,27 @@ import spoon.reflect.declaration.CtField;
 public class Main {
 
   public static void main(String args[]) {
+    callJMHProcessor(System.getenv("PROJECT_ROOT"));
+    //callStaticFieldsProcessor(System.getenv("PROJECT_ROOT"), MavenLauncher.SOURCE_TYPE.APP_SOURCE);
     //callStaticFieldsProcessor("/home/rhiobet/irit/jitsi-videobridge/", MavenLauncher.SOURCE_TYPE.APP_SOURCE);
-    //callStaticFieldsProcessor("/home/rhiobet/irit/commons-codec/", MavenLauncher.SOURCE_TYPE.APP_SOURCE);
+    //callStaticFieldsProcessor("/home/rhiobet/irit/java-experiments/GithubParser/commons-codec/", MavenLauncher.SOURCE_TYPE.APP_SOURCE);
     //callDataflowProcessor("/home/rhiobet/eclipse-workspace/Test/", MavenLauncher.SOURCE_TYPE.APP_SOURCE);
-    callStatementsRandomizationProcessor("/home/rhiobet/eclipse-workspace/Test/", MavenLauncher.SOURCE_TYPE.APP_SOURCE);
+    //callStatementsRandomizationProcessor("/home/rhiobet/eclipse-workspace/Test/", MavenLauncher.SOURCE_TYPE.APP_SOURCE);
   }
-  
+
+
+  private static void callJMHProcessor(String project) {
+    SpoonAPI spoon = new MavenLauncher(project, MavenLauncher.SOURCE_TYPE.ALL_SOURCE);
+
+    spoon.addProcessor("fr.rhiobet.spoonanalysis.processors.jmh.BenchmarkProcessor");
+
+    spoon.buildModel();
+
+    BenchmarkProcessor.setModel(spoon.getModel());
+
+    spoon.process();
+  }
+
   
   private static void callDataflowProcessor(String project, MavenLauncher.SOURCE_TYPE sourceType) {
     SpoonAPI spoon = new MavenLauncher(project, sourceType);
