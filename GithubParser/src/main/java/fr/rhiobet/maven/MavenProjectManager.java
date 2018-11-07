@@ -1,7 +1,6 @@
 package fr.rhiobet.maven;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Files;
@@ -45,10 +44,15 @@ public class MavenProjectManager {
     this.projectRoot = projectRoot;
     this.invoker = new DefaultInvoker();
     try {
+      new File(projectRoot).mkdirs();
+      File errorLogFile = new File(projectRoot + "/error.log");
+      File outputLogFile = new File(projectRoot + "/out.log");
+      errorLogFile.createNewFile();
+      outputLogFile.createNewFile();
       this.invoker.setMavenHome(new File(mavenHome))
-              .setErrorHandler(new PrintStreamHandler(new PrintStream(projectRoot + "/error.log"), true))
-              .setOutputHandler(new PrintStreamHandler(new PrintStream(projectRoot + "/out.log"), true));
-    } catch (FileNotFoundException e) {
+              .setErrorHandler(new PrintStreamHandler(new PrintStream(errorLogFile), true))
+              .setOutputHandler(new PrintStreamHandler(new PrintStream(outputLogFile), true));
+    } catch (IOException e) {
       e.printStackTrace();
     }
   }

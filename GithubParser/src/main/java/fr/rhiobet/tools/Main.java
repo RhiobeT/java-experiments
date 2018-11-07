@@ -1,6 +1,9 @@
 package fr.rhiobet.tools;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.List;
+import java.util.Properties;
 
 import fr.rhiobet.git.AuthentifiedClient;
 import fr.rhiobet.git.JavaRepositorySearcher;
@@ -10,13 +13,28 @@ import fr.rhiobet.maven.MavenProjectManager;
 public class Main {
 
   public static void main(String args[]) {
-    // First we get all of the necessary data from system variables
-    String apiToken = System.getenv("GITHUB_API_TOKEN");
-    String mavenHome = System.getenv("MAVEN_HOME");
-    String projectsRoot = System.getenv("PROJECT_ROOT");
-    String projectsNumber = System.getenv("NUMBER_WANTED");
-    String strategy = System.getenv("STRATEGY");
     
+    String apiToken = null;
+    String mavenHome = System.getenv("M2_HOME");
+    String projectsRoot = "./projects";
+    String projectsNumber = null;
+    String strategy = null;
+    String filterDependencies = null;
+
+    // First we get all of the necessary data from the config file
+    Properties properties = new Properties();
+    try {
+      properties.loadFromXML(new FileInputStream("settings.xml"));
+      apiToken = properties.getProperty("GITHUB_API_TOKEN");
+      mavenHome = properties.getProperty("MAVEN_HOME");
+      projectsRoot = properties.getProperty("PROJECT_ROOT");
+      projectsNumber = properties.getProperty("NUMBER_WANTED");
+      strategy = properties.getProperty("STRATEGY");
+      filterDependencies = properties.getProperty("FILTER_DEPENDENCIES");
+    } catch (IOException e) {
+      System.out.println("Couldn't find 'settings.xml', using default settings.");
+    }
+
     // If the number of projects wasn't specified, we set it to 100 by default
     int projectsNumberInt;
     try {
@@ -38,26 +56,31 @@ public class Main {
     if (strategy == null) {
       strategy = "random";
     }
+
+    searcher.setFilterDependencies(filterDependencies);
     
     if (strategy.equals("random")) {
       System.out.println("Searching...");
       // Random search is essentially just getting the latest updated projects, without caring for stars
-      searcher.find(projectsNumberInt, true);
+      searcher.find(projectsNumberInt, false, true);
     } else if (strategy.equals("stars")) {
-      // This mode will get projects that have different stars rating
+      // This mode will get projects that have the best star ratings
+      searcher.find(projectsNumberInt, true, true);
+    } else if (strategy.equals("repartition")) {
+      // This mode will get projects that have very different stars rating
       searcher.findUsingStarsRepartition(projectsNumberInt, true, true);
     } else if (strategy.equals("hybrid")) {
-      // This mode will use both of the previous modes for half of the set each
+      // This mode will use both random and repartition for half of the set each
       System.out.println("First search...");
       searcher.findUsingStarsRepartition(projectsNumberInt/2, true, true);
       System.out.println("Second search...");
-      searcher.find(projectsNumberInt/2, true);
+      searcher.find(projectsNumberInt/2, false, true);
     } else {
       System.err.println("Unknown strategy");
       System.exit(1);
     }
     System.out.println();
-    
+
     // Here we get and print the results of the search
     List<Repository> results = searcher.getResults();
     System.out.println("Number of Maven projects: " + results.size());

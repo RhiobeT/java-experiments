@@ -4,10 +4,6 @@ services:
   GithubParser:
     container_name: github_parser
     image: github_parser:latest
-    environment:
-      - PROJECT_ROOT=/usr/src/GithubParser/projects
-      - GITHUB_API_TOKEN=${API_TOKEN}
-      - NUMBER_WANTED=${NB_PROJECTS_WANTED}
-      - STRATEGY=${STRATEGY}
     volumes:
-      - ${PROJECT_ROOT}:/usr/src/GithubParser/projects
+      - ./docker-settings.xml:/usr/src/GithubParser/settings.xml
+      - ./projects:/usr/src/GithubParser/projects
